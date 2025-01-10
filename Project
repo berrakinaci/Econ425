@@ -1,0 +1,114 @@
+def calculate_emissions_interactive():
+    """
+    Interactive script to calculate CO2 emissions for online and physical store purchases, including walking.
+    Outputs only the recommendation.
+    """
+
+    # Residual mix factors for all regions
+    residual_mix_factors = {
+        "France": 43,
+        "Germany": 609,
+        "Italy": 466,
+        "Netherlands": 555,
+        "Poland": 811,
+        "Spain": 343,
+        "Sweden": 50,
+        "United Kingdom": 348,
+        "Turkey": 375,  # Added Turkey
+    }
+
+    # Constants
+    vehicle_emissions = {
+        "van": 330,  # Loaded van emissions (gCO2e/km) for e-commerce
+        "personal_car": 237,
+        "public_transport": 150,
+        "walking": 0,  # Negligible emissions for walking
+    }
+    packaging_emissions = 1.45  # Corrugated cardboard (gCO2e/parcel)
+    it_energy_consumption = {"data_centers": 0.32, "network": 0.11}  # kWh/parcel
+    parcels_per_loop = 1000  # Fixed number of parcels per delivery loop
+
+    # Get user inputs
+    print("Choose your country from the following:")
+    for country in residual_mix_factors.keys():
+        print(f"- {country}")
+    country = input("Enter your country: ").strip()
+
+    if country not in residual_mix_factors:
+        print("Invalid country. Please restart and choose a valid country.")
+        return
+
+    residual_mix_factor = residual_mix_factors[country]
+
+    # Online shopping inputs
+    print("\nCalculating emissions for online shopping...")
+    delivery_type_online = "van"  # Vans are only used for e-commerce deliveries
+
+    try:
+        item_weight = float(input("\nEnter the weight of the item (in grams): "))
+        van_distance = float(
+            input("Enter the total delivery van distance (in kilometers): ")
+        )
+    except ValueError:
+        print("Invalid input for weight or distance. Please restart and enter valid numbers.")
+        return
+
+    # Physical store inputs
+    print("\nChoose your travel method to the store:")
+    print("- personal_car")
+    print("- public_transport")
+    print("- walking")
+    delivery_type_physical = input("Enter your choice: ").strip()
+
+    if delivery_type_physical not in ["personal_car", "public_transport", "walking"]:
+        print("Invalid travel method for physical store. Please restart.")
+        return
+
+    try:
+        distance_to_store = float(
+            input("Enter the distance to the store (in kilometers): ")
+        )
+    except ValueError:
+        print("Invalid input for distance. Please restart and enter a valid number.")
+        return
+
+    # Online purchase emissions
+    # Transport emissions for online (vendor to DC to depot)
+    online_transport_emissions = 500 * 12 + 265 * 11
+    # IT energy emissions
+    it_emissions = (
+        (it_energy_consumption["data_centers"] + it_energy_consumption["network"])
+        * residual_mix_factor
+    )
+    # Packaging emissions
+    packaging_emissions_online = (
+        item_weight * 0.1 / 1000 * packaging_emissions
+    )
+    # Delivery emissions (vans for online shopping)
+    van_emissions = (vehicle_emissions["van"] * van_distance) / parcels_per_loop
+    total_online_emissions = (
+        online_transport_emissions + packaging_emissions_online + van_emissions + it_emissions
+    )
+
+    # Physical store emissions
+    # Transport emissions for physical store (vendor to DC to store)
+    physical_transport_emissions = 500 * 12 + 265 * 40
+    # Travel emissions (based on chosen method)
+    travel_emissions_physical = (
+        vehicle_emissions[delivery_type_physical] * distance_to_store
+    )
+    total_physical_emissions = physical_transport_emissions + travel_emissions_physical
+
+    # Determine which is better
+    if total_online_emissions < total_physical_emissions:
+        recommendation = "Online shopping is more sustainable."
+    elif total_online_emissions > total_physical_emissions:
+        recommendation = "Going to the store is more sustainable."
+    else:
+        recommendation = "Both options are equally sustainable."
+
+    # Output only the recommendation
+    print(f"\nRecommendation: {recommendation}")
+
+# Run the interactive function
+calculate_emissions_interactive()
