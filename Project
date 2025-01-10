@@ -14,7 +14,7 @@ def calculate_emissions_interactive():
         "Spain": 343,
         "Sweden": 50,
         "United Kingdom": 348,
-        "Turkey": 375,  # Added Turkey
+        "Turkey": 375,  
     }
 
     # Constants
@@ -26,7 +26,7 @@ def calculate_emissions_interactive():
     }
     packaging_emissions = 1.45  # Corrugated cardboard (gCO2e/parcel)
     it_energy_consumption = {"data_centers": 0.32, "network": 0.11}  # kWh/parcel
-    parcels_per_loop = 1000  # Fixed number of parcels per delivery loop
+    parcels_per_loop = 100  # Fixed number of parcels per delivery loop
 
     # Get user inputs
     print("Choose your country from the following:")
