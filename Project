@@ -14,7 +14,7 @@ def calculate_emissions_interactive():
         "Spain": 343,
         "Sweden": 50,
         "United Kingdom": 348,
-        "Turkey": 375,  # Added Turkey
+        "Turkey": 375,
     }
 
     # Constants
