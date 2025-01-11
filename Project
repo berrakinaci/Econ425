@@ -1,6 +1,6 @@
 def calculate_emissions_interactive():
     """
-    Interactive script to calculate CO2 emissions for online and physical store purchases, including walking.
+    Interactive script to calculate CO2 emissions for online and physical store purchases, including building energy emissions.
     Outputs only the recommendation.
     """
 
@@ -14,7 +14,7 @@ def calculate_emissions_interactive():
         "Spain": 343,
         "Sweden": 50,
         "United Kingdom": 348,
-        "Turkey": 375,  
+        "Turkey": 375,  # Added Turkey
     }
 
     # Constants
@@ -27,6 +27,12 @@ def calculate_emissions_interactive():
     packaging_emissions = 1.45  # Corrugated cardboard (gCO2e/parcel)
     it_energy_consumption = {"data_centers": 0.32, "network": 0.11}  # kWh/parcel
     parcels_per_loop = 100  # Fixed number of parcels per delivery loop
+
+    # Building energy constants
+    warehouse_energy_consumption = 5  # kWh/sqm/month
+    items_per_sqm_warehouse = 20  # Items per square meter in warehouse
+    store_energy_consumption = 50  # kWh/month
+    items_in_store = 1000  # Total items in the physical store
 
     # Get user inputs
     print("Choose your country from the following:")
@@ -86,8 +92,16 @@ def calculate_emissions_interactive():
     )
     # Delivery emissions (vans for online shopping)
     van_emissions = (vehicle_emissions["van"] * van_distance) / parcels_per_loop
+    # Building energy emissions for warehouses
+    warehouse_energy_emissions = (
+        (warehouse_energy_consumption / items_per_sqm_warehouse) * residual_mix_factor
+    )
     total_online_emissions = (
-        online_transport_emissions + packaging_emissions_online + van_emissions + it_emissions
+        online_transport_emissions
+        + packaging_emissions_online
+        + van_emissions
+        + it_emissions
+        + warehouse_energy_emissions
     )
 
     # Physical store emissions
@@ -97,7 +111,15 @@ def calculate_emissions_interactive():
     travel_emissions_physical = (
         vehicle_emissions[delivery_type_physical] * distance_to_store
     )
-    total_physical_emissions = physical_transport_emissions + travel_emissions_physical
+    # Building energy emissions for retail stores
+    store_energy_emissions = (
+        (store_energy_consumption / items_in_store) * residual_mix_factor
+    )
+    total_physical_emissions = (
+        physical_transport_emissions
+        + travel_emissions_physical
+        + store_energy_emissions
+    )
 
     # Determine which is better
     if total_online_emissions < total_physical_emissions:
