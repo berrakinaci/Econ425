@@ -1,7 +1,6 @@
 def calculate_emissions_interactive():
     """
-    Interactive script to calculate CO2 emissions for online and physical store purchases, including building energy emissions.
-    Outputs only the recommendation.
+    Interactive script to calculate CO2 emissions for online and physical store purchases
     """
 
     # Residual mix factors for all regions
